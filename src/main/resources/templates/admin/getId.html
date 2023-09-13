@@ -11,7 +11,7 @@
     <tr>
         <th scope="col">ID</th>
         <th scope="col">FirstName</th>
-        <th scope="col">LastName</th>
+        <th scope="col">Age</th>
         <th scope="col">Email</th>
         <th scope="col">Role</th>
     </tr>
@@ -20,14 +20,25 @@
     <tbody>
     <tr>
         <td th:text="${user.getId()}"/>
-        <td th:text="${user.getFirstName()}"/>
-        <td th:text="${user.getLastName()}"/>
+        <td th:text="${user.getName()}"/>
+        <td th:text="${user.getAge()()}"/>
         <td th:text="${user.getEmail()}"/>
         <td th:text="${user.getRoles()}"/>
+
     </tr>
     </tbody>
 </table>
 <br/>
+
+<a th:href="@{/admin/{id}/update(id=${user.getId()})}">Update</a>
+
+<br/>
+<br/>
+
+<form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">
+    <input type="submit" th:value="Delete"/>
+</form>
+
 <br/>
 <hr/>
 <form th:action="@{/logout}" method="post">
