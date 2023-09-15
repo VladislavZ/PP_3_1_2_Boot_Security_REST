@@ -3,11 +3,13 @@ package ru.kata.spring.boot_security.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 
 //import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.model.Role;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,6 +49,14 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public Role getRole(String role) {
         return roleRepository.getRole(role);
+    }
+
+    public void addRolesToUser(User user, Long[] roleId) {
+        if (roleId != null) {
+            user.getRoles().addAll(Arrays.stream(roleId)
+                    .map(roleRepository::getRoleById)
+                    .collect(Collectors.toSet()));
+        }
     }
 
 }

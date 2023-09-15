@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.Arrays;
@@ -43,11 +44,7 @@ public class AdminController {
     public String save(@ModelAttribute("user") User user,
                        @RequestParam(value = "roleId", required = false)
                        Long[] roleId) {
-        if (roleId != null) {
-            user.getRoles().addAll(Arrays.stream(roleId)
-                    .map(id -> roleService.getRoleById(id))
-                    .collect(Collectors.toSet()));
-        }
+        roleService.addRolesToUser(user, roleId);
         userService.saveUser(user);
         return "redirect:/admin";
     }
@@ -70,11 +67,7 @@ public class AdminController {
     public String updateUser(@ModelAttribute("user") User user,
                              @RequestParam(value = "roleId", required = false)
                              Long[] roleId) {
-        if (roleId != null) {
-            user.getRoles().addAll(Arrays.stream(roleId)
-                    .map(id -> roleService.getRoleById(id))
-                    .collect(Collectors.toSet()));
-        }
+        roleService.addRolesToUser(user, roleId);
         userService.saveUser(user);
         return "redirect:/admin";
     }
