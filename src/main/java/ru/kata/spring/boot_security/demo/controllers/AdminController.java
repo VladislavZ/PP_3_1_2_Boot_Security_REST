@@ -26,7 +26,7 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping()
+    @GetMapping
     public String getAllUsersController(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("roles", roleService.getAllRoles());
@@ -39,7 +39,7 @@ public class AdminController {
         return "admin/getId";
     }
 
-    @PostMapping()
+    @PostMapping
     public String save(@ModelAttribute("user") User user,
                        @RequestParam(value = "roleId", required = false)
                        Long[] roleId) {
