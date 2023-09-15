@@ -48,31 +48,4 @@ public class RoleServiceImpl implements RoleService{
         return roleRepository.getRole(role);
     }
 
-
-
-//    public Role getRoleById(Long id) {
-//        return roleRepository.getRoleById(id);
-//    }
-//
-////    @Override
-////    public void update(Long id, Role updatedRole) {
-////        roleRepository.(updatedRole);
-////    }
-//
-
-//
-//    @Override
-//    public Role getRoleByName(String roleName) {
-//        return roleRepository.getRoleByName(roleName);
-//    }
-
-//    @Override
-//    public Set<Role> setRoleByName(String name, String[] rolesName) {
-//        return roleRepository.setRoleByName(name, rolesName);
-//    }
-
-////    @Override
-//    public Set<Role> setRoles(String[] rolesNames) {
-//        return roleRepository.setRoles(rolesNames);
-//    }
 }
