@@ -51,12 +51,6 @@ public class RoleServiceImpl implements RoleService{
         return roleRepository.getRole(role);
     }
 
-    public void addRolesToUser(User user, Long[] roleId) {
-        if (roleId != null) {
-            user.getRoles().addAll(Arrays.stream(roleId)
-                    .map(roleRepository::getRoleById)
-                    .collect(Collectors.toSet()));
-        }
-    }
+
 
 }

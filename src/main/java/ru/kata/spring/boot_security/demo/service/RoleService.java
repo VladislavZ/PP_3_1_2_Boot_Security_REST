@@ -13,5 +13,4 @@ public interface RoleService {
     Role getRoleById(Long id);
     void deleteRoleById(Long id);
     Role getRole(String role);
-    void addRolesToUser(User user, Long[] roleId);
 }

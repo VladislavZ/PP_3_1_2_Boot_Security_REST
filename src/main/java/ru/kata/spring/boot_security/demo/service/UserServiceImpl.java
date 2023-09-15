@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
-import java.util.List;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -50,4 +52,12 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.getUserByUserName(email);
     }
-}
+
+    @Override
+    public void addRolesToUser(User user, Long[] roleId) {
+        if (roleId != null) {
+            user.getRoles().addAll(Arrays.stream(roleId)
+                    .map(roleService::getRoleById)
+                    .collect(Collectors.toSet()));
+        }
+    }}

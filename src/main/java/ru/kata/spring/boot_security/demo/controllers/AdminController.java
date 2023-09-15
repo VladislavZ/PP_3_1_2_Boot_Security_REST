@@ -44,7 +44,7 @@ public class AdminController {
     public String save(@ModelAttribute("user") User user,
                        @RequestParam(value = "roleId", required = false)
                        Long[] roleId) {
-        roleService.addRolesToUser(user, roleId);
+        userService.addRolesToUser(user, roleId);
         userService.saveUser(user);
         return "redirect:/admin";
     }
@@ -67,7 +67,7 @@ public class AdminController {
     public String updateUser(@ModelAttribute("user") User user,
                              @RequestParam(value = "roleId", required = false)
                              Long[] roleId) {
-        roleService.addRolesToUser(user, roleId);
+        userService.addRolesToUser(user, roleId);
         userService.saveUser(user);
         return "redirect:/admin";
     }
