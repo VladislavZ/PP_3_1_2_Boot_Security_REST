@@ -5,9 +5,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,4 +62,14 @@ public class UserServiceImpl implements UserService {
                     .map(roleService::getRoleById)
                     .collect(Collectors.toSet()));
         }
-    }}
+    }
+
+    public void setUserRoles (User user, String roleAdmin){
+        List<Role> roles = new ArrayList<>();
+        roles.add(roleService.getRole("USER"));
+        if (roleAdmin != null && roleAdmin.equals("ADMIN")) {
+            roles.add(roleService.getRole("ADMIN"));
+        }
+        user.setRoles(roles);
+    }
+}

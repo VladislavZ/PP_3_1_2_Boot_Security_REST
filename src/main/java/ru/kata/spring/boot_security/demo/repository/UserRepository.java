@@ -20,4 +20,6 @@ public interface UserRepository{
     public void update(Long id, User updateUser);
 
     public void delete (Long id);
+
+    public void setUserRoles (User user, String RoleAdmin);
 }

@@ -58,12 +58,7 @@ public class AdminController {
     @PostMapping("/{id}/edit")
     public String editUser(@ModelAttribute("user") User user,
                            @RequestParam(required = false) String roleAdmin) {
-        List<Role> roles = new ArrayList<>();
-        roles.add(roleService.getRole("USER"));
-        if (roleAdmin != null && roleAdmin.equals("ADMIN")) {
-            roles.add(roleService.getRole("ADMIN"));
-        }
-        user.setRoles(roles);
+        userService.setUserRoles(user, roleAdmin);
         userService.saveUser(user);
         return "redirect:/admin";
     }
@@ -71,12 +66,7 @@ public class AdminController {
     @PostMapping("/add")
     public String addUser(@ModelAttribute("user") User user,
                           @RequestParam(required = false) String roleAdmin) {
-        List<Role> roles = new ArrayList<>();
-        roles.add(roleService.getRole("USER"));
-        if (roleAdmin != null && roleAdmin.equals("ADMIN")) {
-            roles.add(roleService.getRole("ADMIN"));
-        }
-        user.setRoles(roles);
+        userService.setUserRoles(user, roleAdmin);
         userService.saveUser(user);
         return "redirect:/admin";
     }
