@@ -8,10 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -41,7 +38,7 @@ public class User implements UserDetails {
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),  //, referencedColumnName = "id"
             inverseJoinColumns = @JoinColumn(name = "role_id")) //, referencedColumnName = "id"
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
     public User() {}
 
@@ -76,6 +73,16 @@ public class User implements UserDetails {
         this.age = age;
     }
 
+    public String getRolesToString() {
+        StringBuilder sb = new StringBuilder();
+        for (Role role : roles) {
+            sb.append(role.toString());
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+
+
     public String getEmail() {
         return email;
     }
@@ -92,15 +99,12 @@ public class User implements UserDetails {
         this.password = new BCryptPasswordEncoder(8).encode(password);
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Role role) {
-        if (this.roles == null) {
-            this.roles = new HashSet<>();
-        }
-        this.roles.add(role);
+    public void setRoles(List <Role> roles) {
+        this.roles = roles;
     }
 
     @Override

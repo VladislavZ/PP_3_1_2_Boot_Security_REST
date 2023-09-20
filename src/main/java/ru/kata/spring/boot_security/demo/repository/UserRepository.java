@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserRepository{
     @Query("SELECT u FROM User u WHERE u.email = :email")
-    public User getUserByUserName(@Param("email") String email);
+    public User loadUserByUsername(@Param("email") String email);
 
     public List<User> getAllUsers();
     public User getUserById(Long id);

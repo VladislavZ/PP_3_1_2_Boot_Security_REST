@@ -31,6 +31,11 @@ public class InitializationUserDB {
         Role role1 = new Role("ADMIN");
         Role role2 = new Role( "USER");
 
+        List<Role> roles = new ArrayList<>();
+        roles.add(role1);
+        roles.add(role2);
+
+
         roleService.saveRole(role1);
         roleService.saveRole(role2);
 
@@ -38,10 +43,9 @@ public class InitializationUserDB {
         User user2 = new User("Петров", 22, "petr@email.com", new BCryptPasswordEncoder(8).encode("1234"));
         User user3 = new User("Роман", 23, "romanov@email.com", new BCryptPasswordEncoder(8).encode("1234"));
 
-        user1.setRoles(role1);
-        user1.setRoles(role2);
-        user2.setRoles(role1);
-        user3.setRoles(role2);
+        user1.setRoles(roles);
+        user2.setRoles(roles);
+        user3.setRoles(roles);
 
         userService.saveUser(user1);
         userService.saveUser(user2);

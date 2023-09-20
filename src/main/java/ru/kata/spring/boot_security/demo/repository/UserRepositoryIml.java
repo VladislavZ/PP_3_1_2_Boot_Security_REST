@@ -1,9 +1,13 @@
 package ru.kata.spring.boot_security.demo.repository;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import javax.persistence.TypedQuery;
@@ -14,16 +18,16 @@ public class UserRepositoryIml implements UserRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-
-    @Override
-    public User getUserByUserName(String email) {
-        TypedQuery<User> typedQuery = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email"
-                , User.class);
-        typedQuery.setParameter("email", email);
-        List<User> users = typedQuery.getResultList();
-        User user = users.get(0);
-        return user;
+    public User loadUserByUsername(String email) {
+            TypedQuery<User> query = entityManager
+                    .createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", email);
+            System.out.println(query.getSingleResult());
+            User user = query.getSingleResult();
+            entityManager.close();
+            return user;
     }
+
 
     @Override
     public List<User> getAllUsers() {
@@ -52,4 +56,5 @@ public class UserRepositoryIml implements UserRepository {
                 .setParameter("id", id)
                 .executeUpdate();
     }
+
 }
