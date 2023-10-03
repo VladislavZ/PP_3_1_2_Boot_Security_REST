@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,33 +21,37 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name = "first_name")
-    @NotEmpty
-    private String name;
-    @Min(value = 1, message = "Age is not correct")
-    @Max(value = 150, message = "Age is not correct" )
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
     @Column(name = "age")
-    private int age;
+    private Integer age;
 
     @Column(name = "email")
-    @NotEmpty
     private String email;
 
     @Column(name = "password")
     private String password;
 
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),  //, referencedColumnName = "id"
-            inverseJoinColumns = @JoinColumn(name = "role_id")) //, referencedColumnName = "id"
-    private List<Role> roles = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public User() {}
 
-    public User(String name, int age, String email, String password) {
-        this.name = name;
-        this.age = age;
+    public User(Long id, String firstName, String lastName, Integer age, String email, String password, Set<Role> roles ) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.id = id;
+        this.roles = roles;
+        this.age = age;
     }
 
     public Long getId() {
@@ -57,31 +62,21 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String firstName) {
-        this.name = firstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public int getAge() {
-        return age;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
-
-    public String getRolesToString() {
-        StringBuilder sb = new StringBuilder();
-        for (Role role : roles) {
-            sb.append(role.toString());
-            sb.append(" ");
-        }
-        return sb.toString();
-    }
-
 
     public String getEmail() {
         return email;
@@ -96,78 +91,89 @@ public class User implements UserDetails {
     }
 
     public void setPassword(String password) {
-        this.password = new BCryptPasswordEncoder(8).encode(password);
+        this.password = password;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List <Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
     @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
     }
 
-    @Override
-    public String getUsername() {
-        return getEmail();
-    }
-
-    public String getUserRole() {
-        String role = getRoles().toString();
-        if (role != null) {
-            return role;
-        } else {
-            return "User not Role";
+    public String getRolesToString() {
+        StringBuilder sb = new StringBuilder();
+        for (Role role : roles) {
+            sb.append(role.toString());
+            sb.append(" ");
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return age == user.age && Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, age, email, password, roles);
+        return sb.toString();
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", age=" + age +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+    public User addRoleToUser(Role role) {
+        this.roles.add(role);
+        return this;
+    }
+
+    public User addRolesToUser(Role... role) {
+        this.roles.addAll(Arrays.asList(role));
+        return this;
     }
 }

@@ -9,9 +9,7 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 //import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.model.Role;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -26,31 +24,30 @@ public class RoleServiceImpl implements RoleService{
     }
 
     @Override
-    public Set<Role> getAllRoles() {
-        return new HashSet<>(roleRepository.getAllRoles());
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
     }
 
     @Transactional
     @Override
     public void saveRole(Role role) {
-        roleRepository.saveRole(role);
+        roleRepository.save(role);
     }
 
+    @Transactional
     @Override
     public void deleteRoleById(Long id) {
-        roleRepository.deleteRoleById(id);
+        roleRepository.deleteById(id);
     }
 
     @Override
     public Role getRoleById(Long id) {
-        return roleRepository.getRoleById(id);
+        return roleRepository.findById(id).get();
     }
 
     @Override
     public Role getRole(String role) {
-        return roleRepository.getRole(role);
+        return roleRepository.getRoleByName(role);
     }
-
-
 
 }

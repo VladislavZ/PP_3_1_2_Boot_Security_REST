@@ -9,11 +9,11 @@ import java.util.List;
 public interface UserService extends UserDetailsService{
 
     List<User> getAllUsers();
-    void saveUser(User user);
+    boolean saveUser(User user);
     User getUserById(Long id);
     void deleteUserById(Long id);
     UserDetails loadUserByUsername(String email);
-    void addRolesToUser(User user, Long[] roleId);
-    public void setUserRoles (User user, String RoleAdmin);
+    void editUser(User user);
+    boolean existsById(Long id);
 
 }

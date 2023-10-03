@@ -3,15 +3,14 @@ package ru.kata.spring.boot_security.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -20,56 +19,55 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService) {
+    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+        return userRepository.findAll();
     }
 
     @Override
     @Transactional
-    public void saveUser(User user) {
-        userRepository.save(user);
+    public boolean saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            return false;
+        }
+        userRepository.saveAndFlush(user);
+        return true;
     }
-
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.getUserById(id);
+        return userRepository.findById(id).get();
     }
 
     @Override
     @Transactional
     public void deleteUserById(Long id) {
-        userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.loadUserByUsername(email);
+    public UserDetails loadUserByUsername(String username) {
+        return userRepository.findByEmail(username);
     }
 
+    @Transactional
     @Override
-    public void addRolesToUser(User user, Long[] roleId) {
-        if (roleId != null) {
-            user.getRoles().addAll(Arrays.stream(roleId)
-                    .map(roleService::getRoleById)
-                    .collect(Collectors.toSet()));
-        }
+    public void editUser(User user) {
+        userRepository.saveAndFlush(user);
     }
 
-    public void setUserRoles (User user, String roleAdmin){
-        List<Role> roles = new ArrayList<>();
-        roles.add(roleService.getRole("USER"));
-        if (roleAdmin != null && roleAdmin.equals("ADMIN")) {
-            roles.add(roleService.getRole("ADMIN"));
-        }
-        user.setRoles(roles);
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
     }
 }

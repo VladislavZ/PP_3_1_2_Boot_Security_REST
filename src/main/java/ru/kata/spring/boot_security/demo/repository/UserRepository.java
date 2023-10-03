@@ -8,18 +8,9 @@ import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.List;
 
-public interface UserRepository{
-    @Query("SELECT u FROM User u WHERE u.email = :email")
-    public User loadUserByUsername(@Param("email") String email);
-
-    public List<User> getAllUsers();
-    public User getUserById(Long id);
-
-    public void save (User user);
-
-    public void update(Long id, User updateUser);
-
-    public void delete (Long id);
-
-    public void setUserRoles (User user, String RoleAdmin);
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    User findByEmail(String email);
 }
+
+

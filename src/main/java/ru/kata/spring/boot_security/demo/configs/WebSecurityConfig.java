@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 @Configuration
@@ -23,29 +25,31 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SuccessUserHandler successUserHandler;
-    private final UserService userService;
     private final PasswordEncoder encoder;
+    private final UserService userService;
 
     @Autowired
-    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserService userService, PasswordEncoder encoder) {
+    public WebSecurityConfig(SuccessUserHandler successUserHandler,
+                             PasswordEncoder encoder,
+                             UserService userService) {
         this.successUserHandler = successUserHandler;
-        this.userService = userService;
         this.encoder = encoder;
+        this.userService = userService;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/user").hasAnyAuthority("ADMIN", "USER")
-                .antMatchers("/admin").hasAuthority("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().successHandler(successUserHandler)
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
+        http.csrf().disable();
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        http.addFilterBefore(filter, CsrfFilter.class);
+        http.authorizeRequests()
+                .antMatchers("/*").permitAll()
+                .antMatchers("/user").access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+                .antMatchers("/api/users/**").access("hasAnyRole('ROLE_ADMIN')")
+                .and().formLogin()
+                .successHandler(successUserHandler);
     }
 
     @Bean
@@ -55,17 +59,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         provider.setUserDetailsService(userDetailsService());
         return provider;
     }
-
     @Bean
     public UserDetailsService userDetailsService() {
         return userService::loadUserByUsername;
     }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
-
+    // Фильтр для обработки FetchType.LAZY
     @Bean
     public FilterRegistrationBean<OpenEntityManagerInViewFilter> openSessionInViewFilter() {
         FilterRegistrationBean<OpenEntityManagerInViewFilter> registrationBean = new FilterRegistrationBean<>();
