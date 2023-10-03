@@ -19,7 +19,6 @@ public class MyRestController {
     private final RoleService roleService;
     private final UserService userService;
 
-    @Autowired
     public MyRestController(RoleService roleService, UserService userService) {
         this.roleService = roleService;
         this.userService = userService;
@@ -64,12 +63,12 @@ public class MyRestController {
     }
 
     @GetMapping("/roles")
-    ResponseEntity<List<Role>>getAllRoles(){
+    public ResponseEntity<List<Role>>getAllRoles(){
         return new ResponseEntity<>(roleService.getAllRoles(), HttpStatus.OK);
     }
 
     @GetMapping("/roles/{id}")
-    ResponseEntity<Role> getRoleById(@PathVariable("id") Long id){
+    public ResponseEntity<Role> getRoleById(@PathVariable("id") Long id){
         return new ResponseEntity<>(roleService.getRoleById(id), HttpStatus.OK);
     }
 }
